@@ -16,7 +16,13 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
     <header className={styles.header}>
       <nav className={`${styles.menu} p-4`}>
         <div className={styles.menu_part_left}>
-          <NavLink to='/' end className={clsx(styles.link, 'mr-10')}>
+          <NavLink
+            to='/'
+            end
+            className={({ isActive }) =>
+              clsx(styles.link, styles.link_constructor, 'mr-10')
+            }
+          >
             <BurgerIcon
               type={
                 pathname === '/' || pathname.startsWith('/ingredients')
@@ -24,13 +30,27 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
                   : 'secondary'
               }
             />
-            <p className='text text_type_main-default ml-2'>Конструктор</p>
+            <p
+              className={`text text_type_main-default ml-2 ${
+                pathname === '/' || pathname.startsWith('/ingredients')
+                  ? ''
+                  : 'text_color_inactive'
+              }`}
+            >
+              Конструктор
+            </p>
           </NavLink>
           <NavLink to='/feed' className={styles.link}>
             <ListIcon
               type={pathname.startsWith('/feed') ? 'primary' : 'secondary'}
             />
-            <p className='text text_type_main-default ml-2'>Лента заказов</p>
+            <p
+              className={`text text_type_main-default ml-2 ${
+                pathname.startsWith('/feed') ? '' : 'text_color_inactive'
+              }`}
+            >
+              Лента заказов
+            </p>
           </NavLink>
         </div>
         <Link to='/' className={styles.logo}>
@@ -43,7 +63,11 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
           <ProfileIcon
             type={pathname.startsWith('/profile') ? 'primary' : 'secondary'}
           />
-          <p className='text text_type_main-default ml-2'>
+          <p
+            className={`text text_type_main-default ml-2 ${
+              pathname.startsWith('/profile') ? '' : 'text_color_inactive'
+            }`}
+          >
             {userName || 'Личный кабинет'}
           </p>
         </NavLink>
