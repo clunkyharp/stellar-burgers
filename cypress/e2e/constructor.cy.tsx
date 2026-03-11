@@ -7,6 +7,19 @@ import order from '../fixtures/order.json';
 const BUN_NAME = 'Краторная булка N-200i';
 const MAIN_NAME = 'Биокотлета из марсианской Магнолии';
 const ORDER_NUMBER = String(order.order.number);
+const SELECTORS = {
+  modal: '[data-cy=modal]',
+  modalClose: '[data-cy=modal-close]',
+  modalOverlay: '[data-cy=modal-overlay]'
+};
+const TEXT = {
+  addButton: 'Добавить',
+  orderButton: 'Оформить заказ',
+  ingredientDetailsTitle: 'Детали ингредиента',
+  calories: 'Калории, ккал',
+  chooseBuns: 'Выберите булки',
+  chooseFilling: 'Выберите начинку'
+};
 
 describe('Страница конструктора бургера', () => {
   beforeEach(() => {
@@ -46,7 +59,7 @@ describe('Страница конструктора бургера', () => {
 
   const addIngredientByName = (name: string) => {
     cy.contains('li', name).within(() => {
-      cy.contains('button', 'Добавить').click();
+      cy.contains('button', TEXT.addButton).click();
     });
   };
 
@@ -62,26 +75,26 @@ describe('Страница конструктора бургера', () => {
   it('открывает и закрывает модальное окно ингредиента (крестик и оверлей)', () => {
     cy.contains('a', BUN_NAME).click();
 
-    cy.contains('Детали ингредиента').should('be.visible');
+    cy.contains(TEXT.ingredientDetailsTitle).should('be.visible');
     cy.contains(BUN_NAME).should('be.visible');
-    cy.contains('Калории, ккал').should('be.visible');
+    cy.contains(TEXT.calories).should('be.visible');
 
-    cy.get('[data-cy=modal]').should('be.visible');
-    cy.get('[data-cy=modal-close]').click();
-    cy.contains('Детали ингредиента').should('not.exist');
+    cy.get(SELECTORS.modal).should('be.visible');
+    cy.get(SELECTORS.modalClose).click();
+    cy.contains(TEXT.ingredientDetailsTitle).should('not.exist');
 
     cy.contains('a', BUN_NAME).click();
-    cy.contains('Детали ингредиента').should('be.visible');
+    cy.contains(TEXT.ingredientDetailsTitle).should('be.visible');
 
-    cy.get('[data-cy=modal-overlay]').click({ force: true });
-    cy.contains('Детали ингредиента').should('not.exist');
+    cy.get(SELECTORS.modalOverlay).click({ force: true });
+    cy.contains(TEXT.ingredientDetailsTitle).should('not.exist');
   });
 
   it('создаёт заказ, показывает номер, закрывает модалку и очищает конструктор', () => {
     addIngredientByName(BUN_NAME);
     addIngredientByName(MAIN_NAME);
 
-    cy.contains('button', 'Оформить заказ').click();
+    cy.contains('button', TEXT.orderButton).click();
     cy.wait('@createOrder')
       .its('request.body')
       .should('deep.equal', {
@@ -92,13 +105,13 @@ describe('Страница конструктора бургера', () => {
         ]
       });
 
-    cy.get('[data-cy=modal]').should('be.visible');
+    cy.get(SELECTORS.modal).should('be.visible');
     cy.contains(ORDER_NUMBER).should('be.visible');
 
-    cy.get('[data-cy=modal-close]').click();
+    cy.get(SELECTORS.modalClose).click();
     cy.contains(ORDER_NUMBER).should('not.exist');
 
-    cy.contains('Выберите булки').should('exist');
-    cy.contains('Выберите начинку').should('exist');
+    cy.contains(TEXT.chooseBuns).should('exist');
+    cy.contains(TEXT.chooseFilling).should('exist');
   });
 });
